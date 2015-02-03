@@ -61,6 +61,8 @@ abstract class AbstractWrapper implements WrapperInterface
             return new EntityWrapper($object, $om);
         } elseif ($om instanceof DocumentManager) {
             return new MongoDocumentWrapper($object, $om);
+        } elseif ($om instanceof \Doctrine\ODM\PHPCR\DocumentManager) {
+            return new PHPCRDocumentWrapper($object, $om);
         }
         throw new UnsupportedObjectManagerException('Given object manager is not managed by wrapper');
     }
