@@ -233,6 +233,10 @@ abstract class BaseTestCasePHPCRODM extends \PHPUnit_Framework_TestCase
             ->method('getMetadataDriverImpl')
             ->will($this->returnValue($mappingDriver));
 
+        $config->expects($this->any())
+            ->method('getDefaultRepositoryClassName')
+            ->will($this->returnValue('Doctrine\ODM\PHPCR\DocumentRepository'));
+
 
         return $config;
     }

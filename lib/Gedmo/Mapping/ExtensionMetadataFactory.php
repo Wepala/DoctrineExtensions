@@ -70,7 +70,7 @@ class ExtensionMetadataFactory
      */
     public function getExtensionMetadata($meta)
     {
-        if ($meta->isMappedSuperclass) {
+        if ($meta->isMappedSuperclass || get_class($this->objectManager) == 'Doctrine\ODM\PHPCR\DocumentManager') { //TODO huge hack because super classes can't be versioned
             return; // ignore mappedSuperclasses for now
         }
         $config = array();
