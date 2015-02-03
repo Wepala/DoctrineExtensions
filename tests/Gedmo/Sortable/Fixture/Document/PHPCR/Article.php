@@ -20,9 +20,17 @@ class Article
 
     /**
      * @Gedmo\SortablePosition
-     * @ODM\Long
+     * @ODM\Long(nullable=true)
      */
     protected $position;
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     public function getId()
     {

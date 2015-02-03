@@ -2,6 +2,7 @@
 
 namespace Tool;
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ODM\PHPCR\Mapping\Driver\AnnotationDriver;
 use Doctrine\ODM\PHPCR\DocumentManager;
 use Doctrine\ODM\PHPCR\Repository\DefaultRepositoryFactory;
@@ -13,6 +14,9 @@ use Gedmo\Sluggable\SluggableListener;
 use Gedmo\Timestampable\TimestampableListener;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 use Gedmo\Loggable\LoggableListener;
+use Jackalope\Session;
+use Jackalope\RepositoryFactoryDoctrineDBAL;
+use Jackalope\Tools\Console\Command\InitDoctrineDbalCommand;
 
 /**
  * Base test case contains common mock objects
@@ -29,6 +33,7 @@ abstract class BaseTestCasePHPCRODM extends \PHPUnit_Framework_TestCase
      * @var DocumentManager
      */
     protected $dm;
+    protected $sessions;
 
     /**
      * {@inheritdoc}
@@ -43,6 +48,11 @@ abstract class BaseTestCasePHPCRODM extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        foreach ($this->sessions as $session) {
+            $session->logout();
+        }
+        $this->sessions = array();
+
         if ($this->dm) {
             $this->dm->clear();
             $this->dm->close();
@@ -61,7 +71,34 @@ abstract class BaseTestCasePHPCRODM extends \PHPUnit_Framework_TestCase
     protected function getMockDocumentManager(EventManager $evm = null, $config = null)
     {
         $config = $config ? $config : $this->getMockAnnotatedConfig();
-        $session = $this->getMockSession();
+
+        $conn = array(
+            'driver' => 'pdo_sqlite',
+            'memory' => true,
+        );
+
+        $workspace = 'default';
+        $user = 'admin';
+        $pass = 'admin';
+        $factory = new \Jackalope\RepositoryFactoryDoctrineDBAL();
+        $connection = DriverManager::getConnection($conn);
+        $repository = $factory->getRepository(array('jackalope.doctrine_dbal_connection' => $connection));
+        $credentials = new \PHPCR\SimpleCredentials(null, null);
+
+        //init the dbal
+        $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
+            'connection' => new \Jackalope\Tools\Console\Helper\DoctrineDbalHelper($connection)
+        ));
+
+        $command = new InitDoctrineDbalCommand();
+        $command->setHelperSet($helperSet);
+        $command->run($this->getMock('Symfony\\Component\\Console\\Input\\InputInterface'),$this->getMock('Symfony\\Component\\Console\\Output\\OutputInterface'));
+
+
+        $session = $repository->login($credentials, $workspace);
+        $this->sessions[] = $session;
+
+
 
         try {
             $this->dm = DocumentManager::create($session,$config, $evm ?: $this->getEventManager());

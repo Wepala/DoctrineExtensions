@@ -2,6 +2,7 @@
 
 namespace Gedmo\Sortable\Mapping\Event\Adapter;
 
+use Doctrine\ODM\PHPCR\Query\NoResultException;
 use Gedmo\Mapping\Event\Adapter\Common as BaseAdapterCommon;
 use Gedmo\Sortable\Mapping\Event\SortableAdapter;
 
@@ -24,7 +25,11 @@ final class Common extends BaseAdapterCommon implements SortableAdapter
             $qb->field($alias.'.'.$group)->equals($value);
         }
         $qb->orderBy()->desc()->field($alias.'.'.$config['position']);
-        $document = $qb->getQuery()->getSingleResult();
+        try {
+            $document = $qb->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
+            return -1;
+        }
 
         if ($document) {
             return $meta->getReflectionProperty($config['position'])->getValue($document);

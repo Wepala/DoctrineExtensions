@@ -31,11 +31,12 @@ class SortablePHPCRDocumentTest extends BaseTestCasePHPCRODM
     {
         for ($i = 0; $i <= 4; $i++) {
             $article = new Article();
+            $article->setId('/article'.$i);
             $article->setTitle('article'.$i);
             $this->dm->persist($article);
         }
         $this->dm->flush();
-        $this->dm->clear();
+        $repo = $this->dm->getRepository(self::ARTICLE);
     }
 
     public function testInitialPositions()
