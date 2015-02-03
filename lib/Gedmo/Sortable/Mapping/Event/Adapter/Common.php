@@ -17,9 +17,9 @@ final class Common extends BaseAdapterCommon implements SortableAdapter
     public function getMaxPosition(array $config, $meta, $groups)
     {
         $dm = $this->getObjectManager();
-        $alias = 'uoc';
+        $alias = 'u';
         $qb = $dm->createQueryBuilder();
-        $qb->from($config['useObjectClass'],$alias);
+        $qb->from()->document($config['useObjectClass'],$alias);
         foreach ($groups as $group => $value) {
             $qb->field($alias.'.'.$group)->equals($value);
         }
