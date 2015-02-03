@@ -2,8 +2,8 @@
 
 namespace Gedmo\Tool\Wrapper;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Proxy\Proxy;
+use Doctrine\ODM\PHPCR\DocumentManager;
+use Doctrine\Common\Persistence\Proxy;
 
 /**
  * Wraps document or proxy for more convenient
