@@ -135,6 +135,14 @@ abstract class BaseTestCasePHPCRODM extends \PHPUnit_Framework_TestCase
             ->method('getNodeTypeManager')
             ->will($this->returnValue($nodeTypeManager));
 
+        $qm = $this->getMock('PHPCR\\Query\\QueryManagerInterface');
+        $qm->expects($this->any())
+            ->method('getQOMFactory')
+            ->will($this->returnValue($this->getMock('PHPCR\\Query\\QOM\\QueryObjectModelFactoryInterface')));
+        $workSpace->expects($this->any())
+                  ->method('getQueryManager')
+                  ->will($this->returnValue($qm));
+
         $session->expects($this->any())
             ->method('getWorkspace')
             ->will($this->returnValue($workSpace));

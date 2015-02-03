@@ -36,6 +36,7 @@ class Annotation extends AbstractAnnotationDriver
         'integer',
         'smallint',
         'bigint',
+        'long'
     );
 
     /**

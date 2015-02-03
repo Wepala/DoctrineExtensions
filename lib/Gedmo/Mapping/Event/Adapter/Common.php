@@ -15,7 +15,7 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
  * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class   Common implements AdapterInterface
+class Common implements AdapterInterface
 {
     /**
      * @var \Doctrine\Common\EventArgs
